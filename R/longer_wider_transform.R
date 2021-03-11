@@ -1,0 +1,7 @@
+library(reshape2)
+dt <- read_delim("/data/user/yangzz/mapping/fieldergenomecompare/1.diff_dev/201_final/chr3A.1M.combine_hetediff", "\t", escape_double = FALSE, trim_ws = TRUE)
+aql <- melt(dt)
+hist(log10(aql$value),breaks = 100)
+dt1 <- read_delim("/data/user/yangzz/mapping/fieldergenomecompare/1.diff_dev/201_final/chr3A.1M.combinediff", "\t", escape_double = FALSE, trim_ws = TRUE)
+aqAB <- melt(dt1)
+hist(log10(aqAB$value),breaks = 100)
