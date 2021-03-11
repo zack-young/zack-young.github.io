@@ -1,0 +1,1 @@
+parallel --xapply -j procfile ./bisample_compare_distance.sh ::: $(eval cat ../GSR_MCL/sample_path.txt) ::: ../../metadata_cultivar_196_nongke_10+.txt ::: /data3/user3/wangwx/projs/HMM_for_yzz_comp/201212/201_sample_compare_HMMdata

@@ -1,0 +1,22 @@
+cat chr1A.1.raw.vcf.filter chr1A.2.vcf.GT.filter.4b > chr1A.vcf.GT.filter
+cat chr2A.1.raw.vcf.filter chr2A.2.vcf.GT.filter.4b > chr2A.vcf.GT.filter
+cat chr3A.1.raw.vcf.filter chr3A.2.vcf.GT.filter.4b > chr3A.vcf.GT.filter
+cat chr4A.1.raw.vcf.filter chr4A.2.vcf.GT.filter.4b > chr4A.vcf.GT.filter
+cat chr5A.1.raw.vcf.filter chr5A.2.vcf.GT.filter.4b > chr5A.vcf.GT.filter
+cat chr6A.1.raw.vcf.filter chr6A.2.vcf.GT.filter.4b > chr6A.vcf.GT.filter
+cat chr7A.1.raw.vcf.filter chr7A.2.vcf.GT.filter.4b > chr7A.vcf.GT.filter
+cat chr1B.1.raw.vcf.filter chr1B.2.vcf.GT.filter.4b > chr1B.vcf.GT.filter
+cat chr2B.1.raw.vcf.filter chr2B.2.vcf.GT.filter.4b > chr2B.vcf.GT.filter
+cat chr3B.1.raw.vcf.filter chr3B.2.vcf.GT.filter.4b > chr3B.vcf.GT.filter
+cat chr4B.1.raw.vcf.filter chr4B.2.vcf.GT.filter.4b > chr4B.vcf.GT.filter
+cat chr5B.1.raw.vcf.filter chr5B.2.vcf.GT.filter.4b > chr5B.vcf.GT.filter
+cat chr6B.1.raw.vcf.filter chr6B.2.vcf.GT.filter.4b > chr6B.vcf.GT.filter
+cat chr7B.1.raw.vcf.filter chr7B.2.vcf.GT.filter.4b > chr7B.vcf.GT.filter
+cat chr1D.1.raw.vcf.filter chr1D.2.vcf.GT.filter.4b > chr1D.vcf.GT.filter
+cat chr2D.1.raw.vcf.filter chr2D.2.vcf.GT.filter.4b > chr2D.vcf.GT.filter
+cat chr3D.1.raw.vcf.filter chr3D.2.vcf.GT.filter.4b > chr3D.vcf.GT.filter
+cat chr4D.1.raw.vcf.filter chr4D.2.vcf.GT.filter.4b > chr4D.vcf.GT.filter
+cat chr5D.1.raw.vcf.filter chr5D.2.vcf.GT.filter.4b > chr5D.vcf.GT.filter
+cat chr6D.1.raw.vcf.filter chr6D.2.vcf.GT.filter.4b > chr6D.vcf.GT.filter
+cat chr7D.1.raw.vcf.filter chr7D.2.vcf.GT.filter.4b > chr7D.vcf.GT.filter
+

@@ -1,0 +1,70 @@
+#!/data/user/yangzz/worktools/anaconda3/bin/python
+# #!/usr/bin/env python
+
+def Cluster ( infile="inflie.txt", bin_size = 1000000, cutoff = 2000, DP_file="DPmatrix.txt", GQ_file='GQmatrix.txt',CNV_file='CNVfilter.txt',num=1 ,outfile="outfile.txt"):
+
+    #CNV_PATH="/data/user/yangzz/mapping/fieldergenomecompare/5.cross_sample/CNV_masker/"
+    x=np.loadtxt(infile, "i2")  # int8, int16, int32, int64 四种数据类型可以使用字符串 'i1', 'i2','i4','i8' 代替
+    n_sample=x.shape[1]
+    init_mat=np.zeros((n_sample, n_sample))
+    #cnv_mat=np.loadtxt(CNV_file)
+    #cnv_mat_tmp=cnv_mat[num-1,]
+    DP_matrix=np.loadtxt(DP_file, "i2")
+    GQ_matrix=np.loadtxt(GQ_file, "i2")
+    DP_final=np.where((DP_matrix<3)|(DP_matrix>99),30,1)
+    GQ_final=np.where(GQ_matrix<8,30,1)
+    missing_mat=np.zeros(x.shape, "i2")
+    missing_mat[(DP_final<30)&(GQ_final<30)&(x<30)]=1
+    #print(len(missing_mat))
+    if len(missing_mat) == 1:
+        miss_matrix=(missing_mat[:,None]+missing_mat[None,:])
+        miss_matrix_filter=np.zeros(miss_matrix.shape, "i2")
+        miss_matrix_filter[miss_matrix==2]=1
+        miss_matrix_filter_sum=1-miss_matrix_filter
+    else:
+        miss_matrix=(missing_mat[:,None,:]+missing_mat[:,:,None])
+        miss_matrix_filter=np.zeros(miss_matrix.shape, "i2")
+        miss_matrix_filter[miss_matrix==2]=1
+        miss_matrix_filter_sum=x.shape[0]-miss_matrix_filter.sum(axis=0)#/x.shape[0]
+    #miss_array=miss_matrix_filter_sum[np.triu_indices(miss_matrix_filter_sum.shape[0],k=1)]
+    final=x*GQ_final
+    final=final*DP_final
+    if len(final.shape) == 1 :
+        s_result=abs(final[:,None]-final[None,:])
+        s_result[s_result>5]=0
+        z=(s_result*bin_size)/(bin_size-miss_matrix_filter_sum)
+    else:
+        s_result=abs(final[:,None,:]-final[:,:,None])
+        s_result[s_result>5]=0
+        z=(s_result.sum(axis=0)*bin_size)/(bin_size-miss_matrix_filter_sum)
+    #z[miss_matrix_filter_sum==x.shape[0]]=0
+    #z=cnv_mat_tmp[:,None]*cnv_mat_tmp[None,:]*z
+    array=z[np.triu_indices(z.shape[0],k=1)]/4
+    ## x[:,:,None] equal to numpy.newaxis and by this way we can make sure subtract between items
+    #ratio_array=np.nan_to_num(array/miss_array)
+    np.savetxt(outfile, array, newline='\t', fmt="%.3f")
+
+
+
+from optparse import OptionParser
+import numpy as np
+from sklearn.cluster import AgglomerativeClustering
+
+# ===========================================
+def main():
+    parser = OptionParser()
+    parser.add_option("-i", dest="infile")
+    parser.add_option("-b", dest="bin_size", default=1000000)
+    parser.add_option("-c", dest="cutoff", default=2000)
+    parser.add_option("-n", dest="CNV_file")
+    parser.add_option("-u", dest="num")
+    parser.add_option("-o", dest="outfile")
+    parser.add_option("-d", dest="DP_file")
+    parser.add_option("-g", dest="GQ_file")
+    (options, args) = parser.parse_args()
+    #
+    Cluster (options.infile, int(options.bin_size), int(options.cutoff), options.DP_file, options.GQ_file, options.CNV_file, int(options.num), options.outfile)
+
+# ===========================================
+if __name__ == "__main__":
+    main()
