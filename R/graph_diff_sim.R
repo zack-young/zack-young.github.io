@@ -81,7 +81,7 @@ DEV=arguments$DEV
 
 
 options(scipen=200)
-files = read.table(paste(DEV,"/plotfile/","plotfile_",SAMPLE1,"_",SAMPLE2,sep=""), as.is = T, header = F, comment.char = "")
+files = read.table(paste(DEV,"/plotfile/","plotfile_",SAMPLE1,"_",SAMPLE2,suffix,sep=""), as.is = T, header = F, comment.char = "")
 
 pdf(paste(DEV,"/pdf/",SAMPLE1_name,"_",SAMPLE2_name,suffix,".pdf",sep=""), height = figure.height, width = figure.width)
 plotChrom <- function(xleft, ybottom, height, len, centro, binsize){

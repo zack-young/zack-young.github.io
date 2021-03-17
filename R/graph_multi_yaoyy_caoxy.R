@@ -1,7 +1,6 @@
 library(gplots)
-files = read.table("/data/user/yangzz/mapping/fieldergenomecompare/20200418_shannong/plotfile_three", as.is = T, header = F, comment.char = "")
-#qrc_lis_glu= read.table("/data/user/yangzz/mapping/fieldergenomecompare/202009_11_yaoyy/statistic/gene_list_glu_gli.txt", as.is = T, header = F, comment.char = "")
-#qrc_lis_other = read.table("/data/user/yangzz/mapping/fieldergenomecompare/202009_11_yaoyy/statistic/gene_list_other.txt", as.is = T, header = F, comment.char = "")
+files = read.table("/data/user/yangzz/mapping/fieldergenomecompare/202009_11_yaoyy/plotfile_CP07_CP09_CP11", as.is = T, header = F, comment.char = "")
+qrc_lis = read.table("/data/user/yangzz/mapping/fieldergenomecompare/202009_11_yaoyy/statistic/gene_list.txt", as.is = T, header = F, comment.char = "")
 
 options(scipen=200)
 #pdf(paste("C:/Users/lenovo/Desktop/2019_3_6/T",j,"_both_ratio_new.pdf",sep=""), height = 10, width = 15.69)
@@ -42,15 +41,12 @@ plotChrom <- function(xleft, ybottom, height, len, centro, binsize){
 
 low1 <- "#F9B731"
 low2 <- "#3689EA"
-low3 <- "#AA00A2"
-low4 <- "#1CF6A4"
-low5 <- "#FB6EF1"
 delboth <-  "#007046"
 dupboth <- "#AA0000"
 undefined <- "#7B7B7B"
 #color_pad <- c(low,mid,high,del1,del2,delboth,dup1,dup2,dupboth)
-color_pad <- c(low1,low2,low3,low4,low5,delboth,dupboth,undefined)
-color_pad1 <- c("#E6255D","#E18032","#ECC923","#17A3C0","#4DBCA8")
+color_pad <- c(low1,low2,low1,low2,delboth,dupboth,undefined)
+color_pad1 <- c(rgb(1, 0, 0, 0.5),rgb(0, 1, 0, 0.5),rgb(0, 0, 1, 0.5))
 plot(x=0, type="n", bty="n", yaxt="n",xaxt="n",
      xlab="", ylab="", 
      xlim=c(-200, 1100), ylim=c(-5, nrow(files)+1),
@@ -76,23 +72,20 @@ segments(x0=0,
 #     c("Similar","LOW_Diff","HIGH_Diff"), cex = 0.8,pos = 4)
 #text(x=rep(940,6), y=c(30,33,36,21,24,27),
 #     c("Both Deletion","Both Duplication","Undefined","JiMai22","YanNong15","SN224"), cex = 0.8,pos = 4)
-text(x=rep(860,5), y=seq(18,38,5),#x=seq(-190,-50,20), y=rep(30.5,8),
-     c("Undefiend", "SNFu63","YN15","Both Deletion","Both Duplication"),cex = 0.8,pos=4)#,srt=90)
-#"AlphaGliadin","GammaGliadin","OmegaGliadin","HMW","LMW"
-#"884187","954072","jinan17"ji200040919
+text(x=rep(860,8), y=seq(18,39,3),#x=seq(-190,-50,20), y=rep(30.5,8),
+     c("Undefiend","ji200040919","954072","Both Deletion","Both Duplication","HMW","LMW","Gliadin"),cex = 0.8,pos=4)#,srt=90)
+
 rect(xleft = rep(850,5), xright = rep(860,5),
-     ybottom = seq(17.5,37.5,5),
-     ytop = seq(18.5,38.5,5),
+     ybottom = seq(17.5,30.5,3),
+     ytop = seq(18.5,31.5,3),
      col = c(undefined,low1,low2,delboth,dupboth), border = NA)
 
-x=rep(855,5)
-y=seq(35.5,47.5,3)
+x=rep(855,3)
+y=seq(32.5,38.5,3)
 polygon( c(x[1]+5,x[1],x[1]-5), c(y[1]+1,y[1],y[1]+1), border = NA, col = color_pad1[1])
 polygon( c(x[2]+5,x[2],x[2]-5), c(y[2]+1,y[2],y[2]+1), border = NA, col = color_pad1[2])
 polygon( c(x[3]+5,x[3],x[3]-5), c(y[3]+1,y[3],y[3]+1), border = NA, col = color_pad1[3])
 
-polygon( c(x[4]+5,x[4],x[4]-5), c(y[4]+1,y[4],y[4]+1), border = NA, col = color_pad1[4])
-polygon( c(x[5]+5,x[5],x[5]-5), c(y[5]+1,y[5],y[5]+1), border = NA, col = color_pad1[5])
 #color_pad <- c(blue,red)
 
 centromere <- c(215,239,173,337,346,268,300,346,241,300,317,184,254,206,189,286,327,211,357,287,340)
@@ -136,12 +129,12 @@ for(j in 1:nrow(files)){
       #                      labels = c('1','2','3','4','5','6')
       #      )
       chro1 <- factor(chro, 
-                      levels = c("low1","low2","low3","low4","low5",'deletion_both_CNV','duplication_both_CNV',"undefined"),
+                      levels = c("low1","low2","low3","low4",'deletion_both_CNV','duplication_both_CNV',"undefined"),
                       #levels = c("low","mid","high",
                       #           paste(SAMPLE1,"deletion_CNV",sep=""),paste(SAMPLE2,"deletion_CNV",sep=""),"deletion_both_CNV",
                       #           paste(SAMPLE1,"duplication_CNV",sep=""),paste(SAMPLE2,"duplication_CNV",sep=""),"duplication_both_CNV"),
                       #labels = c('3','1','1','4',"5","6")
-                      labels = c('1','2','3',"4","5",'6',"7","8")
+                      labels = c('1','2','3',"4","5",'6',"7")
                       #levels = c("jm22","both","lx99"),
                       #labels = c('4',"5","6")
       )
@@ -165,52 +158,40 @@ for(j in 1:nrow(files)){
           )
         }
         plotChrom(0, j-0.3, 1.25, len, centro, 1000000)
-        #qrc_dt_glu <- qrc_lis_glu[which(qrc_lis_glu[,3]==files[j,2]),]
-        #qrc_dt_other <- qrc_lis_other[which(qrc_lis_other[,3]==files[j,2]),]
-        #if (nrow(qrc_dt_glu)!=0){
-        #  chro_gene <- factor(qrc_dt_glu[,1])
-        #  chro_gene2 <- factor(chro_gene, 
-        #                  levels = c("Alpha-gliadin", "Gamma-gliadin", "Omega-gliadin","HMW-glutenin", "LMW-glutenin"),
-        #                  labels = c('1','2','3','4','5')
+        qrc_dt <- qrc_lis[which(qrc_lis[,1]==files[j,2]),]
+        if (nrow(qrc_dt)!=0){
+          chro_gene <- factor(qrc_dt[,4])
+          chro_gene2 <- factor(chro_gene, 
+                          levels = c("HMW","LMW","GLIA"),
+                          labels = c('1','2','3')
 
-        #  )
-        #  for(a in 1:nrow(qrc_dt_glu)){
-        #    x <- as.numeric(qrc_dt_glu[a,4])/1000000
-        #    tx <- c(x+1,x,x-1)
-        #    ty <- c(j+3.4,j+2.8,j+3.4)
-        #    polygon( tx, ty, border = NA, col = color_pad1[as.numeric(as.vector(chro_gene2[a]))])
+          )
+          for(a in 1:nrow(qrc_dt)){
+            x <- as.numeric(qrc_dt[a,2])/1000000
+            tx <- c(x+1,x,x-1)
+            ty <- c(j+2.9,j+2.3,j+2.9)
+            polygon( tx, ty, border = NA, col = color_pad1[as.numeric(as.vector(chro_gene2[a]))])
             #text(x=(as.numeric(qrc_dt[a,2])+as.numeric(qrc_dt[a,3]))/2,y=j+2.5,a)
-        #  }
-        #}
-        #if (nrow(qrc_dt_other)!=0){
-        #  for(a in 1:nrow(qrc_dt_other)){
-        #    x <- as.numeric(qrc_dt_other[a,4])/1000000
-        #    lines(x=c(x,x),y=c(j-0.3,j+3),lty=2,lwd=0.5)
-        #    text(x=x,y=j+3.4,qrc_dt_other[a,1],cex = 0.2)
-        #  }
-        #}
-          
+          }}
       }else{
         #points(x=-10,y=j+0.75,pch=0,cex=0.7)
-        #if (files[j,3]==1){
-          ybow=j+0.3
-        #}else if (files[j,3]==2){
-        #  ybow=j-0.2
-        #}else{
-        #  ybow=j-0.6
-        #}
         for(i in 1:nrow(data1)){
+          if (files[j,3]==1){
+            ybow=j+0.4
+          }else{
+            ybow=j-0.15
+          }
           rect(xleft = as.numeric(data1[i,2])/1000000,
                #         #ybottom = j+0.1,
                ybottom = ybow,
-               ytop = ybow+0.6,
+               ytop = ybow+0.3,
                xright = as.numeric(data1[i,3])/1000000,
                #         #ytop = j+0.9,
                col = color_pad[as.numeric(as.vector(chro1[i]))],
                border = NA#color_pad[as.numeric(as.vector(chro1[i]))] 
           )
+          
         }
-          segments(x0=as.numeric(data1[1,2])/1000000,y0=ybow,x1 =as.numeric(data1[nrow(data1),2])/1000000 ,y1=ybow)  
       }
       #text(x=900, y=j+0.5, lis[SAMPLE1], cex = 0.75,adj=0)
       #text(x=-100, y=j+2, files[j,2], cex = 1)
@@ -305,5 +286,6 @@ ya <- pos_oper(2)
 speci_pos(739,ya) #7B
 text(x=c(739+2.2), y=c(ya-0.5),c('Psy-B1'), cex = 0.5,pos = 4,col=red)
 #dev.off()
+
 
 

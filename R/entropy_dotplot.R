@@ -39,12 +39,13 @@ DF5$CNC <- as.numeric(DF5$CNC)
 DF5$CNL <- as.numeric(DF5$CNL)
 
 DF6 <- DF5[DF5$CNL-DF5$CNC>2,]
-ch_gene <- read.table("/data/user/yangzz/mapping/fieldergenomecompare/ppd1/chosen_gene",as.is = T, header = F, comment.char = "")
-DF6 <- DF5[grepl(ch_gene[1,1], DF5$gene),]
-for (i in ch_gene$V1[-1]) {
-  DF6<-rbind(DF5[grepl(i, DF5$gene),],DF6)
-  
+ch_gene <- read.table("/data/user/yangzz/mapping/fieldergenomecompare/ppd1/chose_gene_2",as.is = T, header = F,sep = "\t", comment.char = "")
+colnames(ch_gene) <- c("gene_new","uniq")
+DF6 <- DF5[grepl(ch_gene[1,2], DF5$uniq),]
+for (i in ch_gene$uniq[-1]) {
+  DF6<-rbind(DF5[grepl(i, DF5$uniq),],DF6)
 }
+DF6 <- merge(DF6,ch_gene,by = 'uniq')
 
 ggplot(data=DF4,aes(x=CNL,y=CNC)) +
   geom_polygon(data=data.frame(x=c(0,0,2,7,5,3),y=c(2,0,0,5,5,5)),aes(x=x,y=y),fill="red",alpha = 0.2)+
@@ -53,7 +54,7 @@ ggplot(data=DF4,aes(x=CNL,y=CNC)) +
   #geom_abline(slope=1 ,intercept = -2,)+
   geom_abline(slope=1 ,intercept = 0)+
   #geom_abline(slope=1 ,intercept = 2,)+
-  geom_text_repel(data=DF6,aes(x=CNL,y=CNC,label=gene))+
+  geom_text_repel(data=DF6,aes(x=CNL,y=CNC,label=gene_new))+
   geom_point(data=DF6,aes(x=CNL,y=CNC,size=1),colour="#F23E30")+ scale_size_continuous(range = 3)+
   theme(legend.position="right")+
   theme_bw()+coord_fixed()+

@@ -32,6 +32,19 @@ D_CNC <- file1[which(file1$V1=='D'),]$V3
 A_CNL <- file1[which(file1$V1=='A'),]$V4
 B_CNL <- file1[which(file1$V1=='B'),]$V4
 D_CNL <- file1[which(file1$V1=='D'),]$V4
+D_median<- c()
+for (i in c('chr1A','chr2A','chr3A','chr4A','chr5A','chr6A','chr7A','chr1B','chr2B','chr3B','chr4B','chr5B','chr6B','chr7B','chr1D','chr2D','chr3D','chr4D','chr5D','chr6D','chr7D')){
+  D_median <- c(D_median,median(file1[which(file1$V1==i),]$V4))
+}
+  
+
+
+D_median <- c(13,10,12,14,15,10,10)
+A_median <- c(10,15,10,14,10,12,12)
+B_median <- c(13,14,15,14,12,12,12)
+t.test(A_median,B_median)
+t.test(B_median,D_median)
+
 shapiro.test(B_test[1:4999])
 qqnorm(A_test)
 qqline(A_test, col = 3)
@@ -39,8 +52,9 @@ qqnorm(ttest[21:40,2]);
 qqPlot(lm(value~group, data = richness_12), simulate = TRUE, main = 'QQ Plot', labels = FALSE)
 abline(0,1,lwd=2)
 shapiro <- tapply(A_test, D_test, shapiro.test)
-t.test(D_CNC,A_CNC,var.equal=F)
-
+ks.test(sample(D_CNC,replace = F,size=500),sample(A_CNC,replace = F,size=500),var.equal=F)
+ks.test(sample(D_CNC,replace = F,size=500),sample(B_CNC,replace = F,size=500),var.equal=F)
+ks.test(sample(B_CNC,replace = F,size=500),sample(A_CNC,replace = F,size=500),var.equal=F)
 
 
 ggplot(file1)+
