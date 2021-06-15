@@ -1,1 +1,1 @@
-This is GGComp page.
+This is ggComp page.
