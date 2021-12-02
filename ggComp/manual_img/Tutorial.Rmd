@@ -1,195 +1,270 @@
 ---
-title: "Tutorial of WheatGRNdb"
+title: "Tutorial of ggComp"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     theme: readable
     toc: yes
     toc_float: yes
+  pdf_document:
+    toc: yes
 ---
-## 1. General <a name="tp1"></a>
+# ggComp
+ggComp (Genomic-based Germplasm Compare) is a novel strategy fitting complex genomes to evaluate germplasm resources by identifying shared genomic regions and excluding pervasive copy number variations for pairwise accessions. 
 
-### Homepage
-WheatGRNdb is a free-accessible and user-friendly gene regulatory network database for function gene mining in wheat. It contains 2,622,334 TF-target interactions from integrative network wGRN constructed by unsupervised method. In addition, WheatGRNdb also provides a series of analysis tools for users to discover function genes. We will update the database regularly.
+## Installation
+ggComp is a light weight software that only need to make sure Python 3.8.5, samtools 1.4 and bcftools 1.9 are well installed and set in environment path.
 
-<center><img src="homepage.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
+Clone the ggComp repository
+```
+git clone https://github.com/zack-young/ggComp.git
+```
 
-**1.** The logo and modules in database.
 
-**2.** Brief introduction about database.
+## Usage
 
-**3.** Quick links of a few main modules.
+```
 
-**4.** The footer shows the sponsors and website visit statistics.
+Program: ggComp (A pairwised comparison method to identify similar genetic regions and shared CNV regions between accessions.)
+Version: 1.0
 
-___
+Usage:   ggComp [-v|--version] [-h|--help] <command> <argument>
 
-### Unsupervised inference of integrated gene regulatory network
+Commands:
 
-We proposed an unsupervised method to integrate the six different types of networks, including expression-based interactions, TF motif, TF binding, and conserved regulatory network, and one chromatin accessibility score to present an integrative wheat gene regulatory network, `wGRN`. The unsupervised integrative inference for network is suitable for no-model species with little or no training data. Our evaluation results have demonstrated that the wGRN have high predictive power and can recover biologically relevant edges.
+    CNV_detector            detect CNV regions
 
-<center><img src="network_construction.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
+    SNP_extractor           extract SNP information from VCF
 
-## 2. Search GRN <a name="tp2"></a>
+    DSR_counter             compute the DSR
 
-In this page, you can obtain comprehensive information of gene of interest. You can share this page by clicking on the button `Share`. In addition, three search methods (left red box), global interactions (both upstream and downstream interactions), upstream regulators, and downstream targets, are supported here. 
+    SGR_PHR_definer         identify SGR and PHR
 
-<center><img src="search.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
+    HMM_smoother            smoothing SGR and PHR result using HMM
+```
 
-**1.** Gene information including gene ID, gene location, function description, swiss-prot description, TF family, and external link.
+### CNV_detector
+`detect CNV regions`
 
-**2.** Expression levels of genes across tissues.
+```
+Usage: ggComp CNV_detector <--chr_lis <STRING>>  <--single_CNV <FILE> | --pair_CNV <FILE>>
 
-**3.** Interactions table containing TF-target interaction relationships. alongside information about function description of genes, TF motif, and feature evidence was provided.
+    --chr_lis <STRING>      chromosomes that listed in behind file 
+                            e.g. 'chr1A chr1B chr1D'
 
-**4.** GRN plot. Colors represent different gene types (TF famililes or target).
+Options:
 
-**5.** Statistics of interactions supported by diverse features evidence.
+    --single_CNV            detect CNV region of samples ::: input file contains chromosme
+                            list, path of BED file, path of BAM file and output file
+                            e.g. chromosome BED BAM output_dev
+                            produce three files: *.mask_CNV
+                                                 *.mask_CNV_deletion
+                                                 *.mask_CNV_duplication
+ 
+    --pair_CNV              identify pairwise sample specific CNV regions and shared CNV
+                            regions::: input file contains sample names, path of CNV file
+                            and path of output file directory
+                            e.g. sample1_name sample1_directory sample2_name sample2_directory pair_dircetory
 
-**6.** Statistics of degree of nodes in GRN.
+chromosome length in bed file shall not exceed the limit of bedtools (400Mb)
+see test/single_CNV.config and test/pair_CNV.config for more details
+(colunms separated by tab)
+```
 
-**7.** Genome browser JBrowse. Five tracks were showed.
+### SNP_extractor
+`extract SNP information from VCF for DSR calculation`
 
-## 3. GRN enrichment <a name="tp3"></a>
+```
+Usage: ggComp SNP_extractor <--config <FILE>>
 
-In this page, You can obtain a set of enriched regulators (TFs) by inputting gene set of interest. All interactions in wGRN are used to perform enrichment analysis. P value to decide the enrichment significance is calculated through hypergeometric distribution. For instance, HSF family could be significantly enriched using a set of differentially expressed genes in response to heat stress.
+Options:"
 
-<center><img src="enrichment.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
+    --config <FILE>         file contains path of vcf files, sample ID list in vcf for
+                            extracting(separated by ','), path of output file
+                            e.g. VCF_file    vcf_ID   output_file
 
-**1.** Gene list of interest.
+see test/SNP_extractor.config for more details
+(colunms separated by tab)
+```
 
-**2.** Optional parameters including custom background genes, cutoff of significant value and odds ratio, and multi-test method.
+### DSR_counter
+`compute the DSR (Different SNP ratio) by bin`
 
-**3.** GRN enrichment analysis result. Each row represent a enriched TF.
+```
+Usage: ggComp DSR_counter <--config <file>>  [Options]
 
-**4.** Visualization of GRN enrichment. X axis represent -log10(FDR), and Y axis represents enrichment fold (odds ratio). Colors represents TF families. In this instance, HSF family have most significantly enrichment.
+    --config <FILE>         file contains：path of files contain SNP inforamtion;
+                            path of output files; end position of chromosomes
+                            (use 'defalut' to call built-in end position of each chromosomes)
+                            e.g. SNP_file output_file END\default
 
-## 4. Extract GRN <a name="tp4"></a>
+Options:
 
-In this page, by inputting a gene list, you can obtain all nodes interacting with inputted genes in wGRN.
+    --DP_low <INT>          exclude SNP with DP <= <int>. default 3
 
-<center><img src="extract.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
+    --DP_high <INT>         exclude SNP with DP >= <int>. default 99
 
-**1.** Gene list of interest.
+    --GQ_sample <INT>       exclude SNP with GQ <= <int>. default 8
 
-**2.** GRN plot. Colors represent different gene types (TF famililes or target).
+    --bin_size <INT>        bln size. default 1000000
 
-**3.** Interactions table containing TF-target interaction relationships. alongside information about function description of genes, TF motif, and feature evidence was provided.
+see test/DSR_counter.config for more details (colunms separated by tab)
+```
+
+### SGR_PHR_definer
+`detect SGR (Similar Genetic Regions) and PHR (Polymorphism Hotspot Regions) between sample pairs`
 
-## 5. Compare GRN <a name="tp5"></a>
-
-In this page, you can compare TF-target GRNs in which the two genes are located. Two search methods, upstream regulators and downstream targets, are supported here.
-
-<center><img src="compare.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** In this parameter panel, you can select gene type and input gene IDs
-
-**2.** Statistics of shared interactions, P value to decide the enrichment significance is calculated through hypergeometric distribution. Share score is defined as: ( ( # shared genes ) / # targets_1 + ( # shared genes ) / # targets_2 ) / 2.
-
-**3.** GRN plot showing shared intersions.
-
-**4.** Visualization of the respective GRN.
-
-**5.** Interactions table containing TF-target interaction relationships. alongside information about function description of genes, TF motif, and feature evidence was provided.
-
-## 6. Function inference for TF <a name="tp6"></a>
-
-In this page, you can obtain function inference of TF based on enriched GO biological precess term of its targets. Only one TF should be inputted. Only terms with less than FDR of 0.05 were considered as significantly enrichment.
-
-<center><img src="function_inference.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** In this parameter panel, you can input gene IDs.
-
-**2.** Lollipop plot shows enriched GO biological precess. Color represents total number of genes.
-
-**3.** Full table of enriched terms.
-
-## 7. Pathway network <a name="tp7"></a>
-
-In this page, You can get the GO biological process (pathway) network you interest. The pathway network is generated from function inference of each TFs and GO annotation.
-
-<center><img src="pathway.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** In this parameter panel, you can select pathway of interest.
-
-**2.** The TFs enriched in the pathway.
-
-**3.** Visualization of the pathway network.
-
-**4.** Interactions table containing TF-target interaction relationships. alongside information about function description of genes, TF motif, and feature evidence was provided.
-
-## 8. Homoeolog traid <a name="tp8"></a>
-
-In this page, You can view expression and regulation bias among homoeologs based on pre-inferred triad in wheat.
-
-<center><img src="homoeolog.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** In this parameter panel, you can select gene type and input gene ID. Pre-inferred triad will be used.
-
-**2.** Gene IDs in homeolog group.
-
-**3.** Regulation bias among homoeologs. The plot shows relative total number of targets/regulators of gene of interest. Only the interactions supported by at least two homoeologs will be used.
-
-**4.** Frequency of supported interactions by different homoeolog groups.
-
-**5.** Pairwise comparsion among targets/regulators of three homoeologs. P value to decide the enrichment significance is calculated through hypergeometric distribution.
-
-**6.** Expression bias among homoeologs.
-
-## 9. Gene browser <a name="tp9"></a>
-
-In this page, You can quickly search gene information.
-
-<center><img src="gene_browser.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** Search gene information by keyword.
-
-**2.** Search gene information by location.
-
-**3.** Gene information table containing gene ID, location, description, TF family, Swiss-Prot, rice homolog, rice description, Arabidopsis homolog, Arabidopsis description.
-
-## 10. ID conversion <a name="tp10"></a>
-
-In this page, you can submit one or more gene IDs to obtain its matched IDs in different annotation versions of wheat cv. Chinese Spring.
-
-<center><img src="ID_conversion.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** Input gene IDs.
-
-**2.** Matched gene IDs in different annotation versions of wheat cv. Chinese Spring.
-
-## 11. Expression <a name="tp11"></a>
-
-In this page, you can submit one or more gene IDs to view expression patterns of genes in diverse tissues and time-series transcriptome.
-
-<center><img src="expression.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** Input gene IDs.
-
-**2.** Normalization options of expression levels.
-
-**3.** Information and reference of RNA-seq samples.
-
-**4.** Visualization of expression patterns of genes across samples.
-
-## 12. JBrowse <a name="tp12"></a>
-
-In this page, you can browse multiomics track of gene and its flanking region.
-
-<center><img src="JBrowse.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** In the left panel, you can select tracks of interest, including chromatin accessibility (ATAC-seq/DNase-seq), histone modification (H3K27me3, H3K4me3, and H3K9ac ChIP-seq), and expression levels (RNA-seq).
-
-**2.** Right panel shows selected tracks.
-
-## 13. Download <a name="tp13"></a>
-
-In this page, you can download all interactions in wGRN and TFs list in wheat.
-
-<center><img src="download.png" style="width:80%;height:100%;border: 2px solid #FF8247;padding:10px;margin:10px"/></center>
-
-**1.** Statistics of wGRN.
-
-**2.** Statistics of TFs in wheat.
-
+```
+Usage: ggComp SGR_PHR_definer <--noCNV <file> | --plus_CNV <file>> [Options]
+
+    --no_CNV <FILE>         ignore CNV
+                            file contains path of files contain DSR information
+                            and path of output files.
+                            e.g. DSR_file  output
+
+    --plus_CNV <FILE>       take CNV into consideration"  
+                            file contains path of files contain DSR information
+                            path of CNV file and path of output files.
+                            e.g. DSR_file  CNV_file output
+
+Options
+
+    --LEVEL <INT>           threshold divide SGR and PHR. default 10
+
+see test/SGR_PHR_definer.config for more details (colunms separated by tab)
+```
+
+### HMM_smoother
+`smoothing SGR (Similar Genetic Regions) and PHR (Polymorphism Hotspot Regions) result using HMM`
+
+```
+Usage: ggComp HMM_smoother [Options]
+
+Options:
+
+    --input <FOLDER>        folder path of SGR and PHR phasing results
+
+    --output <FOLDER>       output path
+
+    --folder_lis <FILE>     containing a list of folder names of SGR and PHR phasing
+                            results that are goining to be smoothed
+                            e.g. C2_C10
+                                C2_C10
+
+    --processes <INT>       (optional) maximum worker processes"
+                            default: 2"
+
+    --train                 (optional) train the model using input data (otherwise using"
+                            the model published in the article)"
+
+    --niter <INT>           (optional) maximum number of iterations to perform in training"
+                            default: 60"
+```
+### Visualization
+`Plot the distribution of SGR PHR and CNV across whole genome`
+```
+"Usage: ggComp Visualization <--config <FILE>>"
+
+Options:
+
+   --config <FILE>       file contains path of vcf files, sample ID list in vcf for"
+                         extracting(separated by ','), path of output file"
+                         e.g. path    suffix   SAMPLE1    SAMPLE1_name    SAMPLE2 SAMPLE2_name    pdf_path"
+
+see test/plot.config for more details (colunms separated by tab)"
+```
+
+## Quickstart with an example
+### CNV_detector            
+This is the first step of ggComp that detect CNV regions through BAM files.  
+Each BAM file should contain only one chromosome and the chromosome name in first column of config file should consistent with that in BAM file.  
+BED file records bins that going to be processed.  
+Chromosomes that list in --chr_lis may not consistent with config file as chromosomes may be separated into parts in BAM file.  
+e.g. `--chr_lis 'chr1A chr1B'` but in config file is `chr1A.1 chr1A.2 chr1B.2 chr1B.2`.  
+
+**single_CNV.config**
+```
+chr1A   test/CNV_detector/chr1A_11-12Mb.bed test/CNV_detector/C2/chr1A_11-12Mb_C10.bam  test/CNV_detector/C10
+chr1A   test/CNV_detector/chr1A_11-12Mb.bed test/CNV_detector/C2/chr1A_11-12Mb_C2.bam   test/CNV_detector/C2
+```
+```
+sh src/ggComp.sh CNV_detector --chr_lis chr1A --single_CNV test/single_CNV.config
+```
+
+**pair_CNV.config**
+```
+C2  test/CNV_detector/C2    C10 test/CNV_detector/C10   test/CNV_detector/C2_C10
+```
+```
+sh src/ggComp.sh CNV_detector --chr_lis chr1A --pair_CNV test/pair_CNV.config
+```
+
+### SNP_extractor
+extract SNP information from VCF, including 'CHROM POS REF ALT GT DP GQ' only biallele by MAF<0.01.
+
+**SNP_extractor.config**
+```
+test/SNP_extractor/chr1A_11-12Mb.bcf    2-90377,10-83979    test/SNP_extractor/chr1A_11-12Mb.SNP_gt
+```
+```
+sh src/ggComp.sh SNP_extractor --config test/SNP_extractor.config
+```
+
+### DSR_counter
+compute the DSR from SNP by bins (default bin length: 1000000bp)
+
+**DSR_counter.config**
+```
+test/SNP_extractor/chr1A_11-12Mb.SNP_gt test/DSR_counter/chr1A_11-12Mb.DSR  12000000
+```
+```
+sh src/ggComp.sh DSR_counter --config test/DSR_counter.config
+```
+
+### SGR_PHR_definer
+identify SGR and PHR from DSR file
+
+**SGR_PHR_plus_CNV.config**
+```
+test/DSR_counter/chr1A_11-12Mb.DSR  test/CNV_detector/C2_C10/chr1A.C2toC10all_CNV   test/SGR_PHR_definer/chr1A_11-12Mb_combineCNV.level
+```
+```
+sh src/ggComp.sh SGR_PHR_definer --plus_CNV test/SGR_PHR_plus_CNV.config
+```
+
+**SGR_PHR_noCNV.config**
+```
+test/DSR_counter/chr1A_11-12Mb.DSR  test/SGR_PHR_definer/chr1A_11-12Mb_noCNV.level
+```
+```
+sh src/ggComp.sh SGR_PHR_definer --no_CNV test/SGR_PHR_noCNV.config
+```
+
+### HMM_smoother
+smoothing SGR and PHR result using HMM
+#### Smooth only
+```
+sh WheatComp.sh HMM_smoother \
+    -i /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/data \
+    --folder_lis /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/folders.txt \
+    -o /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/out\
+    --processes 21
+```
+#### Train & Smooth
+```
+sh WheatComp.sh HMM_smoother \
+    -i /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/data \
+    --folder_lis /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/folders.txt \
+    -o /data3/user3/wangwx/projs/HMM_for_yzz_comp/210328-modify/test/out \
+    --processes 21 \
+    --train \
+    --niter 30
+```
+### Visualization
+
+**SGR_PHR_noCNV.config**
+```
+test/Visualization   .homo_undefined_snp_level.HMMv1 Zang1817    Zang1817    S14 ZXM1341 test/Visualization
+```
+```
+sh src/ggComp.sh Visualization --config test/Visualization.config
+```
