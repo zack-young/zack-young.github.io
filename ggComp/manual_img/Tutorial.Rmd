@@ -1,14 +1,13 @@
 ---
 title: "Tutorial of ggComp"
 output:
-  html_document:
-    theme: readable
-    toc: yes
-    toc_float: yes
-  pdf_document:
-    toc: yes
+  rmdformats::readthedown:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
 ---
-# ggComp
 ggComp (Genomic-based Germplasm Compare) is a novel strategy fitting complex genomes to evaluate germplasm resources by identifying shared genomic regions and excluding pervasive copy number variations for pairwise accessions. 
 
 ## Installation
